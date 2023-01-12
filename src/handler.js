@@ -77,12 +77,18 @@ const addBook = (request, h) => {
 }
 
 const getAllBook = () => {
-  return ({
+  const book = books.map(({ id, name, publisher }) => ({
+    id,
+    name,
+    publisher
+  }))
+
+  return {
     status: 'success',
     data: {
-      books
+      books: book
     }
-  })
+  }
 }
 
 const getBookById = (request, h) => {
