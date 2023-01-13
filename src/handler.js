@@ -89,12 +89,12 @@ const getAllBook = (request, h) => {
   if (params) {
     if (params.name !== undefined) {
       const name = params.name.toLowerCase()
-      const book = books.filter((book) => book.name === name)
-      if (book !== undefined) {
+      const book = filterBooks.filter((n) => n.name.toLowerCase().match(name) !== null)
+      if (book) {
         return {
           status: 'success',
           data: {
-            books: filterBooks
+            books: book
           }
         }
       }
