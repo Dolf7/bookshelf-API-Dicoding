@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const { nanoid } = require('nanoid')
 const books = require('./book')
 
@@ -76,17 +77,88 @@ const addBook = (request, h) => {
   return response
 }
 
-const getAllBook = () => {
-  const book = books.map(({ id, name, publisher }) => ({
+const getAllBook = (request, h) => {
+  const filterBooks = books.map(({ id, name, publisher }) => ({
     id,
     name,
     publisher
   }))
 
+  const params = request.query
+
+  if (params) {
+    if (params.name !== undefined) {
+      const name = params.name.toLowerCase()
+      const book = books.filter((book) => book.name === name)
+      if (book !== undefined) {
+        return {
+          status: 'success',
+          data: {
+            books: filterBooks
+          }
+        }
+      }
+    }
+
+    if (params.reading !== undefined) {
+      const readingBook = []
+      if (params.reading === '0') {
+        books.forEach((n) => {
+          if (!n.reading) readingBook.push(n)
+        })
+      } else if (params.reading === '1') {
+        books.forEach((n) => {
+          if (n.reading) readingBook.push(n)
+        })
+      } else {
+        books.forEach((n) => {
+          readingBook.push(n)
+        })
+      }
+      const filterReadingBook = readingBook.map(({ id, name, publisher }) => ({
+        id,
+        name,
+        publisher
+      }))
+      return {
+        status: 'success',
+        data: {
+          books: filterReadingBook
+        }
+      }
+    }
+    if (params.finished !== undefined) {
+      const finishedBooks = []
+      if (params.finished === '0') {
+        books.forEach((n) => {
+          if (!n.finished) finishedBooks.push(n)
+        })
+      } else if (params.finished === '1') {
+        books.forEach((n) => {
+          if (n.finished) finishedBooks.push(n)
+        })
+      } else {
+        books.forEach((n) => {
+          finishedBooks.push(n)
+        })
+      }
+      const filterReadingBook = finishedBooks.map(({ id, name, publisher }) => ({
+        id,
+        name,
+        publisher
+      }))
+      return {
+        status: 'success',
+        data: {
+          books: filterReadingBook
+        }
+      }
+    }
+  }
   return {
     status: 'success',
     data: {
-      books: book
+      books: filterBooks
     }
   }
 }
